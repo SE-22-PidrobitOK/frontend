@@ -3,23 +3,20 @@ import { Box, Button, Typography } from '@mui/material';
 import TextField from './TextField';
 import PasswordField from './PasswordField';
 import { useFormik } from 'formik';
-import * as yup from 'yup'; // Імпортуємо Yup як об'єкт
+import * as yup from 'yup';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import LaptopMacIcon from '@mui/icons-material/LaptopMac';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import GoogleIcon from '@mui/icons-material/Google';
 
 const validationSchema = yup.object({
-  name: yup.string().required("Обов'язкове поле").min(2, "Ім'я має бути щонайменше 2 символи"),
-  phone: yup.string()
-    .matches(/^\+?[1-9]\d{1,14}$/, 'Невірний формат номера телефону')
-    .required("Обов'язкове поле").min(10, 'Номер телефону має бути щонайменше 10 цифр'),
-  email: yup.string().email('Невірний формат email').required("Обов'язкове поле"),
-  password: yup.string().min(8, 'Пароль має бути щонайменше 8 символів').required("Обов'язкове поле"),
-  confirmPassword: yup.string()
-    .oneOf([yup.ref('password'), null], 'Паролі мають збігатися') // Виправлено синтаксис
-    .required("Обов'язкове поле"),
+  email: yup.string().email('Invalid email format').required('Required field'),
+  password: yup.string().min(8, 'Password must be at least 8 characters').required('Required field'),
 });
 
 const Register = () => {
   const formik = useFormik({
-    initialValues: { name: '', phone: '', email: '', password: '', confirmPassword: '' },
+    initialValues: { email: '', password: '' },
     onSubmit: async (values) => {
       console.log(values);
     },
@@ -34,159 +31,172 @@ const Register = () => {
         flexDirection: 'column',
         alignItems: 'center',
         width: '100%',
-        minWidth: '300px',
-        maxWidth: '500px',
-        padding: '20px',
-        backgroundColor: '#1c2526',
-        color: 'white',
-        fontFamily: 'Roboto, sans-serif',
+        maxWidth: '400px',
+        margin: '0 auto',
+        padding: '24px',
       }}
     >
-      <Typography
-        fontFamily="Rubik"
-        sx={{ fontSize: '24px', fontWeight: 500, mb: '20px' }}
-      >
-        Зареєструватися на сайті
+      <Typography variant="h4" sx={{ mb: 1, fontWeight: 600, color: '#1A1919' }}>
+        Sign Up
       </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
-          width: '100%',
+      <Box sx={{display:'flex'}}>
+<Typography variant="body2" sx={{ mb: 3, color: '#1A1919' }}>or&nbsp;</Typography>
+      
+      <Typography 
+        variant="body2" 
+        sx={{ 
+          mb: 3,
+          color: '#0B3BE8',
+          cursor: 'pointer',
+          '&:hover': { textDecoration: 'underline' }
         }}
       >
-        <TextField
-          label="Ім'я"
-          value={formik.values.name}
-          onChange={formik.handleChange('name')}
-          error={!!formik.errors.name}
-          helperText={formik.errors.name}
-          unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
-          size="large"
-        />
-        <TextField
-          label="Номер телефону"
-          value={formik.values.phone}
-          onChange={formik.handleChange('phone')}
-          error={!!formik.errors.phone}
-          helperText={formik.errors.phone}
-          unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
-          size="large"
-        />
+          log in to existing account
+      </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 2, width: '100%', mb: 3 }}>
+        <Button
+          variant="outlined"
+          sx={{
+            flex: 1,
+            py: 2,
+            borderRadius: 1,
+            textTransform: 'none',
+            borderColor: '#E6E6E6',
+            color: '#1A1919',
+            backgroundColor: '#fff',
+            '&:hover': {
+              borderColor: '#0B3BE8',
+              backgroundColor: '#fff'
+            }
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LaptopMacIcon sx={{ fontSize: 24 }} />
+            I'm looking for a job
+          </Box>
+        </Button>
+        <Button
+          variant="outlined"
+          sx={{
+            flex: 1,
+            py: 2,
+            borderRadius: 1,
+            textTransform: 'none',
+            borderColor: '#E6E6E6',
+            color: '#1A1919',
+            backgroundColor: '#fff',
+            '&:hover': {
+              borderColor: '#0B3BE8',
+              backgroundColor: '#fff'
+            }
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ApartmentIcon sx={{ fontSize: 24 }} />
+            I'm hiring
+          </Box>
+        </Button>
+      </Box>
+
+      <Box sx={{ width: '100%', mb: 3 }}>
         <TextField
           label="Email"
           value={formik.values.email}
           onChange={formik.handleChange('email')}
           error={!!formik.errors.email}
           helperText={formik.errors.email}
-          unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
-          size="large"
+          fullWidth
+          color="info"
+          sx={{ mb: 2 }}
         />
         <PasswordField
-          label="Пароль"
+          label="Password"  
           value={formik.values.password}
           onChange={formik.handleChange('password')}
           error={!!formik.errors.password}
           helperText={formik.errors.password}
-          unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
-          size="large"
-        />
-        <PasswordField
-          label="Підтвердіть пароль"
-          value={formik.values.confirmPassword}
-          onChange={formik.handleChange('confirmPassword')}
-          error={!!formik.errors.confirmPassword}
-          helperText={formik.errors.confirmPassword}
-          unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
-          size="large"
+          fullWidth
+          color="info"
         />
       </Box>
+
       <Button
-        onClick={formik.handleSubmit}
-        size="large"
-        color="error"
-        fullWidth={true}
         variant="contained"
+        fullWidth
+        onClick={formik.handleSubmit}
         sx={{
-          marginY: '20px',
+          py: 1.5,
+          textTransform: 'none',
+          borderRadius: 1,
+          mb: 2,
+          backgroundColor: 'info.main',
+          '&:hover': {
+            backgroundColor: '#1664b4'
+          }
         }}
       >
-        <Typography color="primary" fontFamily="Rubik" fontWeight={600}>
-          Зареєструватися
-        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 600, color: 'primary.main' }}>
+        Continue
+      </Typography>
       </Button>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          color: 'rgba(255, 255, 255, 0.7)',
-          margin: '',
-          width: '100%',
-          mb: '10px',
-        }}
-      >
-        <Box
-          sx={{
-            flexGrow: 1,
-            height: '1px',
-            backgroundColor: 'rgba(255, 255, 255, 0.3)',
-          }}
-        />
-        <Typography sx={{ margin: '0 10px', fontSize: '14px' }}>
-          або за допомогою
+
+      <Box sx={{ display: 'flex', alignItems: 'center', width: '100%', mb: 2 }}>
+        <Box sx={{ flex: 1, height: '1px', backgroundColor: '#E6E6E6' }} />
+        <Typography variant="body2" sx={{ mx: 2, color: '#6F6F6F' }}>
+          or sign up with
         </Typography>
-        <Box
-          sx={{
-            flexGrow: 1,
-            height: '1px',
-            backgroundColor: 'rgba(255, 255, 255, 0.3)',
-          }}
-        />
+        <Box sx={{ flex: 1, height: '1px', backgroundColor: '#E6E6E6' }} />
       </Box>
-      <Box sx={{ display: 'flex', gap: '10px', width: '100%' }}>
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
         <Button
-          variant="contained"
+          variant="outlined"
+          fullWidth
           sx={{
-            flex: 1,
+            py: 1.5,
             textTransform: 'none',
-            fontSize: '14px',
-            padding: '10px 0',
-            backgroundColor: '#3b5998',
-            color: 'white',
+            borderRadius: 1,
+            borderColor: '#E6E6E6',
+            color: '#1A1919',
+            backgroundColor: '#fff',
+            '&:hover': {
+              borderColor: '#0B3BE8',
+              backgroundColor: '#fff'
+            }
           }}
-          startIcon={
-            <span style={{ fontSize: '20px', marginRight: '8px' }}>f</span>
-          }
         >
-          <Typography color="primary" fontFamily="Rubik" fontWeight={600}>
-            Facebook
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <LinkedInIcon sx={{ fontSize: 20 }} />
+            Sign up with LinkedIn
+          </Box>
         </Button>
         <Button
-          variant="contained"
+          variant="outlined"
+          fullWidth
           sx={{
-            flex: 1,
+            py: 1.5,
             textTransform: 'none',
-            fontSize: '14px',
-            padding: '10px 0',
-            backgroundColor: '#4285f4',
-            color: 'white',
+            borderRadius: 1,
+            borderColor: '#E6E6E6',
+            color: '#1A1919',
+            backgroundColor: '#fff',
+            '&:hover': {
+              borderColor: '#0B3BE8',
+              backgroundColor: '#fff'
+            }
           }}
-          startIcon={
-            <span style={{ fontSize: '20px', marginRight: '8px' }}>G</span>
-          }
         >
-          <Typography color="primary" fontFamily="Rubik" fontWeight={600}>
-            Google
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <GoogleIcon sx={{ fontSize: 20 }} />
+            Sign up with Google
+          </Box>
         </Button>
       </Box>
+
+      <Typography variant="caption" sx={{ mt: 2, color: '#6F6F6F', textAlign: 'center' }}>
+        By signing up, you agree with <Typography component="span" variant="caption" sx={{ color: '#0B3BE8', cursor: 'pointer' }}>Terms of Service</Typography> & <Typography component="span" variant="caption" sx={{ color: '#0B3BE8', cursor: 'pointer' }}>Privacy</Typography>
+      </Typography>
     </Box>
   );
 };
