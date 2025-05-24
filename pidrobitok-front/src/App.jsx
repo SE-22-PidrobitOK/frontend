@@ -4,6 +4,8 @@ import './App.css'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Registration from './components/Registration.jsx';
 import RegistrationWizard from './components/RegistrationWizard/RegistrationWizard.jsx';
+import VacancyPage from './components/Vacancy/VacancyPage.jsx';
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -31,7 +33,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
     <>
-    <Login />
+    <VacancyPage />
     </>
     </ThemeProvider>
   )
