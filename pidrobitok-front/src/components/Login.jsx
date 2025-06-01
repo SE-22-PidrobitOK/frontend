@@ -7,17 +7,35 @@ import { string, object } from 'yup';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import GoogleIcon from '@mui/icons-material/Google';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import { LoginModelDto } from '../dtoModels/LoginModelDto';
+import axios from 'axios';
 
 const validationSchema = object({
   email: string().email('Invalid email format').required('Required field'),
-  password: string().min(8, 'Password must be at least 8 characters').required('Required field'),
+  password: string()
+    .min(8, 'Password must be at least 8 characters')
+    .required('Required field'),
 });
 
 const Login = () => {
   const formik = useFormik({
     initialValues: { email: '', password: '' },
     onSubmit: async (values) => {
-      console.log(values);
+      const loginModel = new LoginModelDto({
+        email: values.email,
+        password: values.password,
+      });
+      try {
+        console.log(loginModel);
+        const response = await axios.post(
+          'https://localhost:7192/api/Identity/login',
+          loginModel,
+        );
+        const tokens = response.data;
+        console.log(tokens);
+      } catch (error) {
+        console.error('Login failed:', error.response?.data || error.message);
+      }
     },
     validationSchema,
     validateOnChange: false,
@@ -35,7 +53,10 @@ const Login = () => {
         padding: '24px',
       }}
     >
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 600, color: '#1A1919' }}>
+      <Typography
+        variant="h4"
+        sx={{ mb: 3, fontWeight: 600, color: '#1A1919' }}
+      >
         Log in
       </Typography>
 
@@ -72,8 +93,8 @@ const Login = () => {
           mb: 2,
           backgroundColor: 'info.main',
           '&:hover': {
-            backgroundColor: '#1664b4'
-          }
+            backgroundColor: '#1664b4',
+          },
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 600, color: '#fff' }}>
@@ -89,7 +110,9 @@ const Login = () => {
         <Box sx={{ flex: 1, height: '1px', backgroundColor: '#E6E6E6' }} />
       </Box>
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}>
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%' }}
+      >
         <Button
           variant="outlined"
           fullWidth
@@ -102,8 +125,8 @@ const Login = () => {
             backgroundColor: '#fff',
             '&:hover': {
               borderColor: '#0B3BE8',
-              backgroundColor: '#fff'
-            }
+              backgroundColor: '#fff',
+            },
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -123,8 +146,8 @@ const Login = () => {
             backgroundColor: '#fff',
             '&:hover': {
               borderColor: '#0B3BE8',
-              backgroundColor: '#fff'
-            }
+              backgroundColor: '#fff',
+            },
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -144,8 +167,8 @@ const Login = () => {
             backgroundColor: '#fff',
             '&:hover': {
               borderColor: '#0B3BE8',
-              backgroundColor: '#fff'
-            }
+              backgroundColor: '#fff',
+            },
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -156,23 +179,25 @@ const Login = () => {
       </Box>
 
       <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-        <Typography 
-          variant="body2" 
-          sx={{ 
+        <Typography
+          variant="body2"
+          sx={{
             color: '#0B3BE8',
             cursor: 'pointer',
-            '&:hover': { textDecoration: 'underline' }
+            '&:hover': { textDecoration: 'underline' },
           }}
         >
           Sign Up
         </Typography>
-        <Typography variant="body2" sx={{ color: '#6F6F6F' }}>•</Typography>
-        <Typography 
-          variant="body2" 
-          sx={{ 
+        <Typography variant="body2" sx={{ color: '#6F6F6F' }}>
+          •
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
             color: '#0B3BE8',
             cursor: 'pointer',
-            '&:hover': { textDecoration: 'underline' }
+            '&:hover': { textDecoration: 'underline' },
           }}
         >
           Forgot password?

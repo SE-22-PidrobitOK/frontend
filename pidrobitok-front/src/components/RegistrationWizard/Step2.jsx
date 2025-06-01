@@ -4,19 +4,9 @@ import {
   Button,
   TextField,
   Typography,
-  FormControlLabel,
-  Checkbox,
 } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const Step2 = ({ formik, onNext, onBack }) => {
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      formik.setFieldValue('cv', file);
-    }
-  };
-
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 1, fontWeight: 600, color: '#1A1919' }}>
@@ -39,54 +29,6 @@ const Step2 = ({ formik, onNext, onBack }) => {
           color="info"
           required
         />
-
-        <Box>
-          <TextField
-            label="LinkedIn profile"
-            name="linkedinProfile"
-            value={formik.values.linkedinProfile}
-            onChange={formik.handleChange}
-            error={formik.touched.linkedinProfile && Boolean(formik.errors.linkedinProfile)}
-            helperText={
-              (formik.touched.linkedinProfile && formik.errors.linkedinProfile) ||
-              'Link to your LinkedIn profile. Please check that the link is working.'
-            }
-            fullWidth
-            color="secondary"
-          />
-          
-        </Box>
-
-        <Box>
-          <Typography variant="body1" sx={{ color: 'secondary.main', mb: 1 }}>CV</Typography>
-          <Button
-            variant="outlined"
-            component="label"
-            startIcon={<CloudUploadIcon />}
-            sx={{
-              py: 1.5,
-              textTransform: 'none',
-              borderRadius: 1,
-              borderColor: '#E6E6E6',
-              color: '#1A1919',
-              '&:hover': {
-                borderColor: '#0B3BE8',
-                backgroundColor: '#fff'
-              }
-            }}
-          >
-            Choose File
-            <input
-              type="file"
-              hidden
-              accept=".pdf"
-              onChange={handleFileChange}
-            />
-          </Button>
-          <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#6F6F6F' }}>
-            We accepts CVs in PDF format only and up to 10MB in size.
-          </Typography>
-        </Box>
 
         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
           <Button

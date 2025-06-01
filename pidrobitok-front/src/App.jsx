@@ -36,6 +36,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/registration" element={<RegistrationWizard />} />
           {/* Головна сторінка з вакансіями */}
           <Route path="/" element={<VacancyPage />} />
           <Route path="/vacancies" element={<VacancyPage />} />
