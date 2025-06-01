@@ -11,8 +11,6 @@ const PasswordField = ({
   fullWidth = true,
   size = 'medium',
   error = false,
-  unfocusedColor = 'rgba(255, 255, 255, 1)',
-  iconColor = 'primary',
   helperText = '',
   ...props
 }) => {
@@ -24,26 +22,6 @@ const PasswordField = ({
 
   return (
     <TextField
-          sx={{
-
-         '& .MuiInputLabel-root':props=>( { top: size =='small'?'2px':'-5px',}),
-          
-        '& .MuiOutlinedInput-root': {
-          '& input': {
-            color: unfocusedColor, // Колір тексту
-          },
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: unfocusedColor, // Білий бордер при наведенні
-          },
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: unfocusedColor, // Білий бордер у розфокусі
-        },
-        '& .MuiInputLabel-outlined': {
-          color: unfocusedColor, // Білий лейбл у розфокусі
-        },
-        '& .MuiInputBase-root': { height: '45px' },
-      }}
       label={label}
       type={showPassword ? 'text' : 'password'}
       value={value}
@@ -57,7 +35,6 @@ const PasswordField = ({
         endAdornment: (
           <InputAdornment position="end">
             <IconButton
-            color={iconColor}
               onClick={handleTogglePasswordVisibility}
               onMouseDown={(e) => e.preventDefault()} // To prevent focus loss
               edge="end"
@@ -67,7 +44,6 @@ const PasswordField = ({
           </InputAdornment>
         ),
       }}
-
       {...props}
     />
   );
@@ -82,8 +58,6 @@ PasswordField.propTypes = {
   size: PropTypes.oneOf(['small', 'medium']),
   error: PropTypes.bool,
   helperText: PropTypes.string,
-  unfocusedColor: PropTypes.string,
-  iconColor: PropTypes.string,
 };
 
 export default PasswordField;

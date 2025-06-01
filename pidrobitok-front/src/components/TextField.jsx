@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 
 const TextField = ({
   label,
-  value = '',
-  color = 'primary',
+  value,
   onChange,
   type = 'text',
   variant = 'outlined',
@@ -13,47 +12,19 @@ const TextField = ({
   size = 'medium',
   error = false,
   helperText = '',
-  unfocusedColor = 'rgba(255, 255, 255, 1)', // Білий колір за замовчуванням
   ...props
 }) => {
   return (
     <MuiTextField
       label={label}
       value={value}
-      color={color}
       onChange={onChange}
       type={type}
-      variant={variant}
+      variant={variant} // 'outlined', 'filled', 'standard'
       fullWidth={fullWidth}
-      size={size}
+      size={size} // 'small', 'medium'
       error={error}
       helperText={helperText}
-      sx={{
-
-         '& .MuiInputLabel-root':props=>( { top: size =='small'?'2px':'-5px',}),
-          
-        '& .MuiOutlinedInput-root': {
-          '& input': {
-            color: unfocusedColor, // Колір тексту
-          },
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: unfocusedColor, // Білий бордер при наведенні
-          },
-        },
-        '& .MuiOutlinedInput-notchedOutline': {
-          borderColor: unfocusedColor, // Білий бордер у розфокусі
-        },
-        '& .MuiInputLabel-outlined': {
-          color: unfocusedColor, // Білий лейбл у розфокусі
-        },
-        '& .MuiInputLabel-root.Mui-focused': {
-          color: theme => theme.palette[color].info, // Колір лейбла при фокусі
-        },
-        '&:hover .MuiOutlinedInput-notchedOutline.Mui-focused': {
-            color: theme => theme.palette[color].info, // Білий бордер при наведенні
-          },
-        '& .MuiInputBase-root': { height: '45px' },
-      }}
       {...props}
     />
   );
@@ -69,7 +40,6 @@ TextField.propTypes = {
   size: PropTypes.oneOf(['small', 'medium']),
   error: PropTypes.bool,
   helperText: PropTypes.string,
-  unfocusedColor: PropTypes.string,
 };
 
 export default TextField;

@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './components/Login.jsx';
-import Registration from './components/Registration.jsx';
+import Login from './components/Login.jsx'
+import './App.css'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import './App.css';
+import Registration from './components/Registration.jsx';
+import RegistrationWizard from './components/RegistrationWizard/RegistrationWizard.jsx';
+import VacancyPage from './components/Vacancy/VacancyPage.jsx';
+import VacancyDetailPage from './components/Vacancy/VacancyDetailPage.jsx';
 
 const theme = createTheme({
   palette: {
@@ -19,7 +23,7 @@ const theme = createTheme({
       main: '#ff9800',
     },
     info: {
-      main: '#2196f3',
+      main: '#12539f',
     },
     success: {
       main: '#4caf50',
@@ -33,11 +37,17 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
+          <Route path="/registration" element={<RegistrationWizard />} />
+          {/* Головна сторінка з вакансіями */}
+          <Route path="/" element={<VacancyPage />} />
+          <Route path="/vacancies" element={<VacancyPage />} />
+          
+          {/* Сторінка окремої вакансії */}
+          <Route path="/vacancy/:id" element={<VacancyDetailPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
   );
 }
 
-export default App;
+export default App
