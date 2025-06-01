@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 const TextField = ({
   label,
-  value,
+  value = '',
   color = 'primary',
   onChange,
   type = 'text',

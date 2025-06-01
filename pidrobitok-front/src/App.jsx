@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import Login from './components/Login.jsx'
-import './App.css'
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './components/Login.jsx';
 import Registration from './components/Registration.jsx';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import './App.css';
 
 const theme = createTheme({
   palette: {
@@ -30,11 +30,14 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-    <>
-    <Registration />
-    </>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/registration" element={<Registration />} />
+        </Routes>
+      </Router>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

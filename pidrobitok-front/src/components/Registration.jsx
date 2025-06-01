@@ -1,27 +1,66 @@
-import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Typography,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  FormControlLabel,
+} from '@mui/material';
 import TextField from './TextField';
 import PasswordField from './PasswordField';
 import { useFormik } from 'formik';
-import * as yup from 'yup'; // Імпортуємо Yup як об'єкт
+import * as yup from 'yup';
+import { RegisterModelDto } from '../dtoModels/RegisterModelDto';
 
 const validationSchema = yup.object({
-  name: yup.string().required("Обов'язкове поле").min(2, "Ім'я має бути щонайменше 2 символи"),
-  phone: yup.string()
-    .matches(/^\+?[1-9]\d{1,14}$/, 'Невірний формат номера телефону')
-    .required("Обов'язкове поле").min(10, 'Номер телефону має бути щонайменше 10 цифр'),
-  email: yup.string().email('Невірний формат email').required("Обов'язкове поле"),
-  password: yup.string().min(8, 'Пароль має бути щонайменше 8 символів').required("Обов'язкове поле"),
-  confirmPassword: yup.string()
-    .oneOf([yup.ref('password'), null], 'Паролі мають збігатися') // Виправлено синтаксис
+  name: yup
+    .string()
+    .required("Обов'язкове поле")
+    .min(2, "Ім'я має бути щонайменше 2 символи"),
+  surname: yup
+    .string()
+    .required("Обов'язкове поле")
+    .min(2, 'Прізвище має бути щонайменше 2 символи'),
+  email: yup
+    .string()
+    .email('Невірний формат email')
     .required("Обов'язкове поле"),
+  password: yup
+    .string()
+    .min(8, 'Пароль має бути щонайменше 8 символів')
+    .required("Обов'язкове поле"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Паролі мають збігатися')
+    .required("Обов'язкове поле"),
+  role: yup
+    .string()
+    .oneOf(['student', 'employer'], 'Оберіть роль')
+    .required('Оберіть роль'),
 });
 
 const Register = () => {
   const formik = useFormik({
-    initialValues: { name: '', phone: '', email: '', password: '', confirmPassword: '' },
+    initialValues: {
+      name: '',
+      surname: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'student',
+    },
     onSubmit: async (values) => {
-      console.log(values);
+      const registrationModel = new RegisterModelDto({
+        firstName: values.name,
+        lastName: values.surname,
+        email: values.email,
+        password: values.password,
+        isStudent: values.role === 'student',
+      });
+
+      console.log(registrationModel);
     },
     validationSchema,
     validateOnChange: false,
@@ -63,17 +102,17 @@ const Register = () => {
           error={!!formik.errors.name}
           helperText={formik.errors.name}
           unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
+          fullWidth
           size="large"
         />
         <TextField
-          label="Номер телефону"
-          value={formik.values.phone}
-          onChange={formik.handleChange('phone')}
-          error={!!formik.errors.phone}
-          helperText={formik.errors.phone}
+          label="Прізвище"
+          value={formik.values.surname}
+          onChange={formik.handleChange('surname')}
+          error={!!formik.errors.surname}
+          helperText={formik.errors.surname}
           unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
+          fullWidth
           size="large"
         />
         <TextField
@@ -83,7 +122,7 @@ const Register = () => {
           error={!!formik.errors.email}
           helperText={formik.errors.email}
           unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
+          fullWidth
           size="large"
         />
         <PasswordField
@@ -93,7 +132,7 @@ const Register = () => {
           error={!!formik.errors.password}
           helperText={formik.errors.password}
           unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
+          fullWidth
           size="large"
         />
         <PasswordField
@@ -103,30 +142,79 @@ const Register = () => {
           error={!!formik.errors.confirmPassword}
           helperText={formik.errors.confirmPassword}
           unfocusedColor="rgba(255, 255, 255, 1)"
-          fullWidth={true}
+          fullWidth
           size="large"
         />
+
+        <FormControl
+          component="fieldset"
+          error={!!formik.errors.role}
+          sx={{ width: '100%' }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 2,
+              width: '100%',
+            }}
+          >
+            <Typography sx={{ color: 'white', fontWeight: 500 }}>
+              Я реєструюсь як
+            </Typography>
+            <FormControlLabel
+              value="student"
+              control={
+                <Radio
+                  checked={formik.values.role === 'student'}
+                  onChange={formik.handleChange('role')}
+                  sx={{ color: 'white' }}
+                />
+              }
+              label="Студент"
+              sx={{ color: 'white' }}
+            />
+            <FormControlLabel
+              value="employer"
+              control={
+                <Radio
+                  checked={formik.values.role === 'employer'}
+                  onChange={formik.handleChange('role')}
+                  sx={{ color: 'white' }}
+                />
+              }
+              label="Роботодавець"
+              sx={{ color: 'white' }}
+            />
+          </Box>
+
+          {formik.errors.role && (
+            <Typography sx={{ fontSize: '12px', color: '#f44336', mt: '5px' }}>
+              {formik.errors.role}
+            </Typography>
+          )}
+        </FormControl>
       </Box>
+
       <Button
         onClick={formik.handleSubmit}
         size="large"
         color="error"
-        fullWidth={true}
+        fullWidth
         variant="contained"
-        sx={{
-          marginY: '20px',
-        }}
+        sx={{ marginY: '20px' }}
       >
         <Typography color="primary" fontFamily="Rubik" fontWeight={600}>
           Зареєструватися
         </Typography>
       </Button>
+
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
           color: 'rgba(255, 255, 255, 0.7)',
-          margin: '',
           width: '100%',
           mb: '10px',
         }}
@@ -149,6 +237,7 @@ const Register = () => {
           }}
         />
       </Box>
+
       <Box sx={{ display: 'flex', gap: '10px', width: '100%' }}>
         <Button
           variant="contained"
