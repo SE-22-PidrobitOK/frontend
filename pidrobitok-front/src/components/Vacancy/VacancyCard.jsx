@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   CardContent,
@@ -22,6 +23,8 @@ import {
 import PropTypes from 'prop-types';
 
 const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
+  const navigate = useNavigate();
+  
   const {
     id,
     title,
@@ -36,16 +39,28 @@ const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
     companyLogo
   } = vacancy;
 
-  const handleSave = () => {
+  const handleSave = (e) => {
+    e.stopPropagation();
     if (onSave) {
       onSave(id);
     }
   };
 
-  const handleShare = () => {
+  const handleShare = (e) => {
+    e.stopPropagation();
     if (onShare) {
       onShare(vacancy);
     }
+  };
+
+  const handleCardClick = () => {
+    navigate(`/vacancy/${id}`);
+  };
+
+  const handleApplyClick = (e) => {
+    e.stopPropagation();
+    // Перенаправляємо на сторінку деталей з автовідкриттям модалки
+    navigate(`/vacancy/${id}?apply=true`);
   };
 
   const truncateDescription = (text, maxLength = 150) => {
@@ -55,6 +70,7 @@ const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
 
   return (
     <Card
+      onClick={handleCardClick}
       sx={{
         backgroundColor: 'white',
         borderRadius: 3,
@@ -122,10 +138,7 @@ const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
             <Tooltip title="Поділитися">
               <IconButton
                 size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShare();
-                }}
+                onClick={handleShare}
                 sx={{
                   color: '#666',
                   '&:hover': {
@@ -140,10 +153,7 @@ const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
             <Tooltip title={isSaved ? "Видалити з збережених" : "Зберегти"}>
               <IconButton
                 size="small"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSave();
-                }}
+                onClick={handleSave}
                 sx={{
                   color: isSaved ? '#ff6b6b' : '#666',
                   '&:hover': {
@@ -261,11 +271,7 @@ const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
           <Button
             variant="outlined"
             size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Handle apply to vacancy
-              console.log('Apply to vacancy:', id);
-            }}
+            onClick={handleApplyClick}
             sx={{
               borderColor: '#1c2526',
               color: '#1c2526',

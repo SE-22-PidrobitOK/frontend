@@ -22,7 +22,7 @@ const VacancyFilters = ({ onFilterChange, activeFilters, mobile = false }) => {
     'Київ',
     'Львів', 
     'Харків',
-    'Дніпро',
+    'Балаклія',
     'Одеса',
     'Запоріжжя',
     'Вінниця',

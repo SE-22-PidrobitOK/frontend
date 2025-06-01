@@ -73,7 +73,7 @@ const mockVacancies = [
     id: 5,
     title: "Mobile Developer React Native",
     company: "MobileFirst",
-    location: "Дніпро",
+    location: "Балаклія",
     salary: "$2200-3800",
     experience: "2+ років",
     tags: ["React Native", "JavaScript", "iOS", "Android"],
