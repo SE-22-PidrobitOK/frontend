@@ -19,7 +19,7 @@ const validationSchema = yup.object({
     .email('Введіть дійсний email'),
   password: yup.string()
     .required('Пароль є обов\'язковим')
-    .min(6, 'Пароль повинен містити мінімум 6 символів'),
+    .min(6, 'Пароль має містити мінімум 6 символів'),
 });
 
 const Login = () => {
