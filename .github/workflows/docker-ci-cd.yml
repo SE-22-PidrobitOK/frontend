@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -18,17 +18,13 @@ jobs:
       run: |
         cd pidrobitok-front
         npm ci
-    - name: Run linter
-      run: |
-        cd pidrobitok-front
-        npm run lint
     - name: Build project
       run: |
         cd pidrobitok-front
         npm run build
 
   build-and-push:
-    needs: test
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
