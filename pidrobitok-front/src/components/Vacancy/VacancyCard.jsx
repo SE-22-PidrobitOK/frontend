@@ -203,7 +203,7 @@ const VacancyCard = ({ vacancy, onSave, onShare, isSaved = false }) => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#666' }}>
             <Work fontSize="small" />
             <Typography variant="body2">
-              {experience}
+              {+experience !== 0 ? `${experience}+ років` : 'без досвіду'}
             </Typography>
           </Box>
         </Box>

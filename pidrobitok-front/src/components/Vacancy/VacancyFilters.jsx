@@ -30,12 +30,12 @@ const VacancyFilters = ({ onFilterChange, activeFilters, mobile = false }) => {
   ];
 
   const experienceLevels = [
-    'Без досвіду',
-    '1+ рік',
-    '2+ роки', 
-    '3+ роки',
-    '5+ років',
-    '7+ років'
+    '0',
+    '1',
+    '2', 
+    '3',
+    '5',
+    '7'
   ];
 
   const salaryRanges = [
@@ -290,7 +290,7 @@ const VacancyFilters = ({ onFilterChange, activeFilters, mobile = false }) => {
               }
               label={
                 <Typography variant="body2" fontFamily="Rubik">
-                  {experience}
+                  {+experience !== 0 ? `${experience}+ років` : 'без досвіду'}
                 </Typography>
               }
               sx={{ height: 32 }}
@@ -386,7 +386,7 @@ const VacancyFilters = ({ onFilterChange, activeFilters, mobile = false }) => {
               ))}
               {activeFilters.experience.map(exp => (
                 <Chip
-                  key={`exp-${exp}`}
+                  key={`expr-${exp}`}
                   label={exp}
                   size="small"
                   onDelete={() => handleExperienceChange(exp)}

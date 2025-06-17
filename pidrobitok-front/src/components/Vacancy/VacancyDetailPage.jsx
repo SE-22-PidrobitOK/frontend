@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import Navbar from '../Layout/Navbar';
+import Footer from '../Layout/Footer';
 import {
   Box,
   Container,
@@ -269,17 +271,24 @@ const VacancyDetailPage = () => {
             </Button>
           </Paper>
         </Container>
+        <Footer />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ backgroundColor: '#f5f5f5', width: '60vw', minHeight: '100vh', py: 3 }}>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      width: '60vw'
+    }}>
+      <Box sx={{ backgroundColor: '#f5f5f5', width: '60vw', minHeight: '100vh', pb: 3 }}>
       <Container maxWidth="lg">
         {/* Breadcrumbs */}
         <Breadcrumbs 
           separator={<NavigateNext fontSize="small" />}
-          sx={{ mb: 3 }}
+          sx={{ my: 3 }}
         >
           <Link 
             color="inherit" 
@@ -753,11 +762,18 @@ const VacancyDetailPage = () => {
               Скасувати
             </Button>
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={handleApply}
               sx={{
+                borderColor: '#1c2526',
+                color: '#1c2526',
+                fontFamily: 'Rubik',
+                '&:hover': {
                 backgroundColor: '#1c2526',
-                '&:hover': { backgroundColor: '#2c3537' }
+                color: 'white',
+                borderColor: '#1c2526'
+              }
+
               }}
             >
               Надіслати заявку
@@ -812,6 +828,8 @@ const VacancyDetailPage = () => {
           </DialogActions>
         </Dialog>
       </Container>
+    </Box>
+    <Footer />
     </Box>
   );
 };
