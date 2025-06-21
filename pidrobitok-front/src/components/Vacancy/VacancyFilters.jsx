@@ -303,7 +303,7 @@ const VacancyFilters = ({ onFilterChange, activeFilters, mobile = false }) => {
 
       {/* Salary Filter */}
       <FilterSection title="Зарплата">
-        <FormGroup>
+        <FormGroup sx = {{ pb: 4 }}>
           {salaryRanges.map((salary) => (
             <FormControlLabel
               key={salary}
@@ -331,35 +331,6 @@ const VacancyFilters = ({ onFilterChange, activeFilters, mobile = false }) => {
         </FormGroup>
       </FilterSection>
 
-      <Divider sx={{ my: 2 }} />
-
-      {/* Technology Tags Filter */}
-      <FilterSection title="Технології" defaultExpanded={false}>
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-          {popularTags.map((tag) => (
-            <Chip
-              key={tag}
-              label={tag}
-              size="small"
-              clickable
-              onClick={() => handleTagChange(tag)}
-              variant={activeFilters.tags.includes(tag) ? 'filled' : 'outlined'}
-              sx={{
-                borderColor: activeFilters.tags.includes(tag) ? '#1c2526' : '#e0e0e0',
-                backgroundColor: activeFilters.tags.includes(tag) ? '#1c2526' : 'transparent',
-                color: activeFilters.tags.includes(tag) ? 'white' : '#666',
-                fontSize: '0.75rem',
-                height: 28,
-                fontFamily: 'Rubik',
-                '&:hover': {
-                  backgroundColor: activeFilters.tags.includes(tag) ? '#2c3537' : '#f5f5f5',
-                  borderColor: activeFilters.tags.includes(tag) ? '#2c3537' : '#ccc'
-                }
-              }}
-            />
-          ))}
-        </Box>
-      </FilterSection>
 
       {/* Active Filters Summary - Desktop Only */}
       {!mobile && getActiveFilterCount() > 0 && (

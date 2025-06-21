@@ -12,8 +12,10 @@ import EmployerDashboard from './components/Vacancy/EmployerDashboard.jsx';
 import ProtectedRoute from './components/Registration/ProtectedRoute.jsx';
 import { AuthProvider } from './components/Registration/AuthContext';
 import Navbar from './components/Layout/Navbar.jsx';
+import Footer from './components/Layout/Footer.jsx';
 import RoleBasedRedirect from './components/Registration/RoleBasedRedirect.jsx';
 import StudentProfile from './components/Vacancy/StudentProfile.jsx';
+import ApplicationsPage from './components/Vacancy/ApplicationsPage.jsx';
 
 const theme = createTheme({
   palette: {
@@ -81,6 +83,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['employer']}>
                   <AddVacancyPage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/applications" 
+              element={
+                <ProtectedRoute allowedRoles={['employer']}>
+                  <ApplicationsPage />
                 </ProtectedRoute>
               } 
             />

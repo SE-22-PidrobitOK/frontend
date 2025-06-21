@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -19,22 +19,26 @@ import * as yup from 'yup';
 import { useAuth } from './AuthContext';
 
 const validationSchema = yup.object({
-  userName: yup.string()
-    .required("Ім'я користувача обов'язкове")
-    .min(3, "Ім'я користувача повинно містити мінімум 3 символи")
-    .max(20, "Ім'я користувача не повинно перевищувати 20 символів")
-    .matches(/^[a-zA-Z0-9_]+$/, "Ім'я користувача може містити лише літери, цифри та підкреслення"),
-  email: yup.string()
-    .required('Email є обов\'язковим')
-    .email('Введіть дійсний email'),
   firstName: yup.string()
     .required("Ім'я є обов'язковим")
     .min(2, "Ім'я повинно містити мінімум 2 символи")
-    .max(50, "Ім'я не повинно перевищувати 50 символів"),
+    .max(50, "Ім'я не повинно перевищувати 50 символів")
+    .matches(/^[a-zA-Zа-яА-ЯїЇіІєЄґҐ''\s]+$/, "Ім'я може містити тільки літери"),
   lastName: yup.string()
     .required('Прізвище є обов\'язковим')
     .min(2, 'Прізвище повинно містити мінімум 2 символи')
-    .max(50, 'Прізвище не повинно перевищувати 50 символів'),
+    .max(50, 'Прізвище не повинно перевищувати 50 символів')
+    .matches(/^[a-zA-Zа-яА-ЯїЇіІєЄґҐ''\s]+$/, 'Прізвище може містити тільки літери'),
+  email: yup.string()
+    .required('Email є обов\'язковим')
+    .email('Введіть дійсний email'),
+  password: yup.string()
+    .required('Пароль є обов\'язковим')
+    .min(6, 'Пароль повинен містити мінімум 6 символів')
+    .max(100, 'Пароль не повинен перевищувати 100 символів'),
+  confirmPassword: yup.string()
+    .required('Підтвердження паролю є обов\'язковим')
+    .oneOf([yup.ref('password'), null], 'Паролі повинні співпадати'),
   role: yup.string()
     .required('Виберіть роль')
     .oneOf(['employer', 'student'], 'Виберіть коректну роль'),
@@ -42,46 +46,98 @@ const validationSchema = yup.object({
 
 const Registration = () => {
   const navigate = useNavigate();
-  const { register, isAuthenticated, user } = useAuth();
-  const [error, setError] = useState('');
+  const { register, isAuthenticated, user, loading: authLoading, error: authError, clearError } = useAuth();
+  const [localError, setLocalError] = useState('');
 
   // Якщо користувач вже автентифікований, перенаправляємо його
-  React.useEffect(() => {
-    if (isAuthenticated && user) {
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && user) {
       const redirectPath = user.role === 'employer' ? '/employer-dashboard' : '/vacancies';
       navigate(redirectPath, { replace: true });
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [authLoading, isAuthenticated, user, navigate]);
+
+  // Очищуємо помилки при зміні полів
+  useEffect(() => {
+    if (authError || localError) {
+      clearError();
+      setLocalError('');
+    }
+  }, []);
 
   const formik = useFormik({
     initialValues: {
-      userName: '',
-      email: '',
       firstName: '',
       lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
       role: '',
     },
     validationSchema: validationSchema,
-    validateOnMount: true,
+    validateOnMount: false,
     onSubmit: async (values, { setSubmitting }) => {
       try {
-        setError('');
-        const result = await register(values);
+        // Очищуємо попередні помилки
+        setLocalError('');
+        clearError();
+        
+        // Підготовлюємо дані для відправки на бекенд
+        const userData = {
+          firstName: values.firstName.trim(),
+          lastName: values.lastName.trim(),
+          email: values.email.trim().toLowerCase(),
+          password: values.password,
+          role: values.role // student або employer
+        };
+        
+        console.log('Attempting registration with:', { 
+          ...userData, 
+          password: '***' // Не логуємо пароль
+        });
+        
+        const result = await register(userData);
+        
+        console.log('Registration result:', result);
         
         if (result.success) {
+          console.log('Registration successful, user:', result.user);
           // Перенаправляємо залежно від ролі користувача
           const redirectPath = result.user.role === 'employer' 
             ? '/employer-dashboard' 
             : '/vacancies';
           navigate(redirectPath, { replace: true });
+        } else {
+          console.error('Registration failed:', result.error);
+          setLocalError(result.error || 'Помилка реєстрації');
         }
       } catch (err) {
-        setError(err.message);
+        console.error('Registration error:', err);
+        setLocalError(err.message || 'Сталася помилка при реєстрації');
       } finally {
         setSubmitting(false);
       }
     },
   });
+
+  // Показуємо лоадер під час ініціалізації аутентифікації
+  if (authLoading) {
+    return (
+      <Box 
+        sx={{ 
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f5f5f5',
+        }}
+      >
+        <CircularProgress size={40} />
+      </Box>
+    );
+  }
+
+  const displayError = localError || authError;
 
   return (
     <Box 
@@ -126,9 +182,16 @@ const Registration = () => {
           Створіть свій акаунт, заповнивши форму нижче
         </Typography>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
+        {displayError && (
+          <Alert 
+            severity="error" 
+            sx={{ mb: 3 }}
+            onClose={() => {
+              setLocalError('');
+              clearError();
+            }}
+          >
+            {displayError}
           </Alert>
         )}
 
@@ -142,41 +205,17 @@ const Registration = () => {
           }}
         >
           <TextField
-            label="Ім'я користувача"
-            name="userName"
-            value={formik.values.userName}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.userName && Boolean(formik.errors.userName)}
-            helperText={formik.touched.userName && formik.errors.userName}
-            placeholder="Введіть ім'я користувача"
-            fullWidth
-            color="info"
-            required
-            disabled={formik.isSubmitting}
-          />
-
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-            placeholder="Введіть ваш email"
-            fullWidth
-            color="info"
-            required
-            disabled={formik.isSubmitting}
-          />
-
-          <TextField
             label="Ім'я"
             name="firstName"
             value={formik.values.firstName}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              // Очищуємо помилки при зміні поля
+              if (displayError) {
+                setLocalError('');
+                clearError();
+              }
+            }}
             onBlur={formik.handleBlur}
             error={formik.touched.firstName && Boolean(formik.errors.firstName)}
             helperText={formik.touched.firstName && formik.errors.firstName}
@@ -191,11 +230,87 @@ const Registration = () => {
             label="Прізвище"
             name="lastName"
             value={formik.values.lastName}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              // Очищуємо помилки при зміні поля
+              if (displayError) {
+                setLocalError('');
+                clearError();
+              }
+            }}
             onBlur={formik.handleBlur}
             error={formik.touched.lastName && Boolean(formik.errors.lastName)}
             helperText={formik.touched.lastName && formik.errors.lastName}
             placeholder="Введіть ваше прізвище"
+            fullWidth
+            color="info"
+            required
+            disabled={formik.isSubmitting}
+          />
+
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            value={formik.values.email}
+            onChange={(e) => {
+              formik.handleChange(e);
+              // Очищуємо помилки при зміні поля
+              if (displayError) {
+                setLocalError('');
+                clearError();
+              }
+            }}
+            onBlur={formik.handleBlur}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
+            placeholder="Введіть ваш email"
+            fullWidth
+            color="info"
+            required
+            disabled={formik.isSubmitting}
+          />
+
+          <TextField
+            label="Пароль"
+            name="password"
+            type="password"
+            value={formik.values.password}
+            onChange={(e) => {
+              formik.handleChange(e);
+              // Очищуємо помилки при зміні поля
+              if (displayError) {
+                setLocalError('');
+                clearError();
+              }
+            }}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
+            placeholder="Введіть пароль"
+            fullWidth
+            color="info"
+            required
+            disabled={formik.isSubmitting}
+          />
+
+          <TextField
+            label="Підтвердити пароль"
+            name="confirmPassword"
+            type="password"
+            value={formik.values.confirmPassword}
+            onChange={(e) => {
+              formik.handleChange(e);
+              // Очищуємо помилки при зміні поля
+              if (displayError) {
+                setLocalError('');
+                clearError();
+              }
+            }}
+            onBlur={formik.handleBlur}
+            error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+            helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+            placeholder="Підтвердіть пароль"
             fullWidth
             color="info"
             required
@@ -216,6 +331,9 @@ const Registration = () => {
                 mb: 1,
                 '&.Mui-focused': {
                   color: '#1976d2'
+                },
+                '&.Mui-error': {
+                  color: '#d32f2f'
                 }
               }}
             >
@@ -224,7 +342,14 @@ const Registration = () => {
             <RadioGroup
               name="role"
               value={formik.values.role}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                formik.handleChange(e);
+                // Очищуємо помилки при зміні поля
+                if (displayError) {
+                  setLocalError('');
+                  clearError();
+                }
+              }}
               onBlur={formik.handleBlur}
               sx={{ 
                 flexDirection: 'row',
@@ -273,7 +398,7 @@ const Registration = () => {
           <Button
             type="submit"
             variant="outlined"
-            disabled={!formik.isValid || formik.isSubmitting}
+            disabled={formik.isSubmitting || (!formik.isValid && formik.submitCount > 0)}
             sx={{
               py: 1.5,
               mt: 2,
@@ -283,8 +408,8 @@ const Registration = () => {
               color: '#1c2526',
               position: 'relative',
               '&:disabled': {
-                borderColor: '#1c2526',
-                color: '#1c2526',
+                borderColor: '#cccccc',
+                color: '#cccccc',
                 backgroundColor: 'transparent',
                 cursor: 'not-allowed'
               },

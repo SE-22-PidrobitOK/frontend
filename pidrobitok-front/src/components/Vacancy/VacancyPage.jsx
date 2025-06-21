@@ -537,16 +537,19 @@ const VacancyPage = () => {
                 activeFilters={activeFilters}
                 mobile={true}
               />
-              <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
+              <Box sx={{ pt: 3, display: 'flex', gap: 2 }}>
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   fullWidth
                   onClick={() => setFiltersOpen(false)}
                   sx={{
-                    backgroundColor: '#1c2526',
+                    borderColor: '#1c2526',
+                    color: '#1c2526',
                     fontFamily: 'Rubik',
                     '&:hover': {
-                      backgroundColor: '#2c3537'
+                      backgroundColor: '#1c2526',
+                      color: 'white',
+                      borderColor: '#1c2526'
                     }
                   }}
                 >

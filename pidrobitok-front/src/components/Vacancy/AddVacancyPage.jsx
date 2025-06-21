@@ -297,11 +297,22 @@ const AddVacancyPage = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Підготовка даних для збереження
+      const vacancyData = {
+        ...formData,
+        salary: `${formData.salary.from}-${formData.salary.to} ${formData.salary.currency}`,
+        employmentType: formData.employmentType,
+        company: formData.company || "TechCorp Solutions"
+      };
+
+      // Оновлення localStorage
+      updateVacanciesInStorage(vacancyData);
+
       setSubmitStatus({ 
         type: 'success', 
         message: isEditMode ? 'Вакансія успішно оновлена!' : 'Вакансія успішно опублікована!' 
       });
-      
+
       // Redirect after success
       setTimeout(() => {
         navigate('/employer-dashboard');
@@ -314,6 +325,32 @@ const AddVacancyPage = () => {
       });
     }
   };
+
+  const updateVacanciesInStorage = (updatedVacancy) => {
+  const storedVacancies = JSON.parse(localStorage.getItem('employerVacancies') || '[]');
+  
+  if (isEditMode) {
+    // Оновлення існуючої вакансії
+    const updatedVacancies = storedVacancies.map(v => 
+      v.id === parseInt(vacancyId) ? { ...v, ...updatedVacancy } : v
+    );
+    localStorage.setItem('employerVacancies', JSON.stringify(updatedVacancies));
+  } else {
+    // Додавання нової вакансії
+    const newId = storedVacancies.length > 0 ? Math.max(...storedVacancies.map(v => v.id)) + 1 : 1;
+    const newVacancy = {
+      ...updatedVacancy,
+      id: newId,
+      postedDate: "Щойно",
+      isActive: true,
+      views: 0,
+      applications: 0,
+      companyLogo: formData.companyLogo || "/api/placeholder/48/48"
+    };
+    storedVacancies.push(newVacancy);
+    localStorage.setItem('employerVacancies', JSON.stringify(storedVacancies));
+  }
+};
 
   const handleCancel = () => {
     navigate('/employer-dashboard');

@@ -68,7 +68,13 @@ const EmployerDashboard = () => {
 
   // Mock дані вакансій роботодавця
   useEffect(() => {
-    const mockVacancies = [
+  // Спочатку завантажуємо дані з localStorage або використовуємо mock дані
+  const storedVacancies = JSON.parse(localStorage.getItem('employerVacancies') || '[]');
+  
+  let initialVacancies;
+  if (storedVacancies.length === 0) {
+    // Якщо в localStorage немає даних, використовуємо mock дані
+    initialVacancies = [
       {
         id: 1,
         title: "Senior Frontend Developer",
@@ -121,22 +127,32 @@ const EmployerDashboard = () => {
         companyLogo: "/api/placeholder/48/48"
       }
     ];
+    // Зберігаємо початкові дані в localStorage
+    localStorage.setItem('employerVacancies', JSON.stringify(initialVacancies));
+  } else {
+    initialVacancies = storedVacancies;
+  }
 
-    setVacancies(mockVacancies);
-    
-    // Розрахунок статистики
-    const totalVacancies = mockVacancies.length;
-    const activeVacancies = mockVacancies.filter(v => v.isActive).length;
-    const totalViews = mockVacancies.reduce((sum, v) => sum + v.views, 0);
-    const totalApplications = mockVacancies.reduce((sum, v) => sum + v.applications, 0);
-    
-    setStats({
-      totalVacancies,
-      activeVacancies,
-      totalViews,
-      totalApplications
-    });
-  }, []);
+  setVacancies(initialVacancies);
+  
+  // Розрахунок статистики
+  const totalVacancies = initialVacancies.length;
+  const activeVacancies = initialVacancies.filter(v => v.isActive).length;
+  const totalViews = initialVacancies.reduce((sum, v) => sum + v.views, 0);
+  const totalApplications = initialVacancies.reduce((sum, v) => sum + v.applications, 0);
+  
+  setStats({
+    totalVacancies,
+    activeVacancies,
+    totalViews,
+    totalApplications
+  });
+}, []);
+
+// Функція для синхронізації змін з localStorage
+  const syncWithStorage = (updatedVacancies) => {
+    localStorage.setItem('employerVacancies', JSON.stringify(updatedVacancies));
+  };
 
   const handleMenuOpen = (event, vacancy) => {
     event.stopPropagation();
@@ -155,6 +171,7 @@ const EmployerDashboard = () => {
         v.id === vacancy.id ? { ...v, isActive: !v.isActive } : v
       );
       setVacancies(updatedVacancies);
+      syncWithStorage(updatedVacancies);
       
       // Оновлення статистики
       const activeVacancies = updatedVacancies.filter(v => v.isActive).length;
@@ -210,6 +227,7 @@ const EmployerDashboard = () => {
     try {
       const updatedVacancies = vacancies.filter(v => v.id !== selectedVacancy.id);
       setVacancies(updatedVacancies);
+      syncWithStorage(updatedVacancies);
       
       // Оновлення статистики
       const totalVacancies = updatedVacancies.length;
@@ -289,6 +307,28 @@ const EmployerDashboard = () => {
               Керуйте своїми вакансіями та відстежуйте статистику
             </Typography>
           </Box>
+
+          <Button
+            variant="outlined"
+            startIcon={<Visibility />}
+            onClick={() => navigate('/applications')}
+            sx={{
+              borderColor: '#1c2526',
+              color: '#1c2526',
+              fontFamily: 'Rubik',
+              fontWeight: 500,
+              px: 3,
+              py: 1.5,
+              borderRadius: 3,
+              '&:hover': {
+                backgroundColor: '#1c2526',
+                color: 'white',
+                borderColor: '#1c2526'
+              }
+            }}
+          >
+            Переглянути заявки
+          </Button>
           
           <Button
             variant="outlined"
