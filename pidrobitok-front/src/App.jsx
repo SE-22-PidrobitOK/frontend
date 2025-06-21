@@ -16,6 +16,8 @@ import Footer from './components/Layout/Footer.jsx';
 import RoleBasedRedirect from './components/Registration/RoleBasedRedirect.jsx';
 import StudentProfile from './components/Vacancy/StudentProfile.jsx';
 import ApplicationsPage from './components/Vacancy/ApplicationsPage.jsx';
+import ModerationDashboard from './components/Moderation/ModerationDashboard.jsx';
+import ModerationHistory from './components/Moderation/ModerationHistory.jsx';
 
 const theme = createTheme({
   palette: {
@@ -100,6 +102,22 @@ function App() {
                 <ProtectedRoute allowedRoles={['employer']}>
                   <AddVacancyPage />
                 </ProtectedRoute>
+              } 
+            />
+            
+            {/* Захищені маршрути для модераторів */}
+            <Route 
+              path="/moderation" 
+              element={
+                // <ProtectedRoute allowedRoles={['moderator', 'admin']}>
+                  <ModerationDashboard />
+                // </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/moderation/history" 
+              element={
+                  <ModerationHistory />
               } 
             />
             
